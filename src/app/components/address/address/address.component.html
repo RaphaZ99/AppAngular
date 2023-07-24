@@ -1,0 +1,54 @@
+<form [formGroup]="formulary">
+  <div class="form-group">
+    <label>zipcode<span class="required-indicator">*</span></label>
+    <input
+      type="number"
+      class="form-control form-control-sm"
+      appOnlyNumbers
+      appLimitLength
+      [maxLength]="8"
+      formControlName="zipCode"
+    />
+  </div>
+  <div class="form-group">
+    <label>Street<span class="required-indicator">*</span></label>
+    <input
+      type="text"
+      class="form-control form-control-sm"
+      formControlName="street"
+    />
+  </div>
+  <div class="form-group">
+    <label>number<span class="required-indicator">*</span></label>
+    <input
+      type="number"
+      class="form-control form-control-sm"
+      appOnlyNumbers
+      formControlName="number"
+    />
+  </div>
+  <div class="form-group">
+    <label>city<span class="required-indicator">*</span></label>
+    <input
+      type="text"
+      class="form-control form-control-sm"
+      formControlName="city"
+    />
+  </div>
+  <div class="form-group">
+    <label>UF<span class="required-indicator">*</span></label>
+    <input
+      type="text"
+      class="form-control form-control-sm"
+      formControlName="region"
+    />
+  </div>
+  <div class="form-group">
+    <label>complement<span class="required-indicator">*</span></label>
+    <input
+      type="text"
+      class="form-control form-control-sm"
+      formControlName="complement"
+    />
+  </div>
+</form>

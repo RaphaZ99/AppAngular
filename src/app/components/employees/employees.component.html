@@ -1,0 +1,156 @@
+<div class="container p-5 form-wrapper">
+  <div class="row">
+    <div class="col-6 border-light rounded p-5 shadow" *ngIf="employeeForm">
+      <h6>{{ titleFormulary }}</h6>
+      <hr />
+      <form [formGroup]="employeeForm" (ngSubmit)="saveForm()">
+        <div class="form-group">
+          <label>Cpf<span class="required-indicator">*</span></label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            formControlName="cpf"
+            appOnlyNumbers
+            appLimitLength
+            [maxLength]="11"
+            required
+          />
+          <app-input-error
+            [isInvalidInput]="isInvalidField('cpf')"
+            [currentError]="getCurrentError('cpf')"
+            [errorMessages]="{
+              required: 'Field Required',
+              pattern: 'Type only numbers'
+            }"
+          >
+          </app-input-error>
+        </div>
+        <div class="form-group">
+          <label>Name<span class="required-indicator">*</span></label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            formControlName="name"
+          />
+        </div>
+        <div class="form-group">
+          <label>Social Name</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            formControlName="socialName"
+          />
+        </div>
+        <div class="form-group">
+          <label>Rg<span></span></label>
+          <input
+            type="number"
+            class="form-control form-control-sm"
+            appOnlyNumbers
+            appLimitLength
+            [maxLength]="7"
+            formControlName="rg"
+          />
+          <app-input-error
+            [isInvalidInput]="isInvalidField('rg')"
+            [currentError]="getCurrentError('rg')"
+            [errorMessages]="{
+              required: 'Field Required',
+              pattern: 'Type only numbers'
+            }"
+          ></app-input-error>
+        </div>
+        <div class="form-group">
+          <label>Mobile Number<span></span></label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            formControlName="mobileNumber"
+            appOnlyNumbers
+            required=""
+          />
+          <app-input-error
+            [isInvalidInput]="isInvalidField('mobileNumber')"
+            [currentError]="getCurrentError('mobileNumber')"
+            [errorMessages]="{ required: 'Field Required' }"
+          >
+          </app-input-error>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input
+            type="number"
+            class="form-control form-control-sm"
+            appOnlyNumbers
+            formControlName="phoneNumber"
+          />
+        </div>
+        <div class="form-group">
+          <label>BirthDay<span></span></label>
+          <input
+            type="date"
+            class="form-control form-control-sm"
+            formControlName="birthday"
+          />
+        </div>
+        <hr />
+        <div class="form-group">
+          <label>Job Name<span></span></label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            formControlName="jobName"
+          />
+        </div>
+        <div class="form-group">
+          <label>Salary<span></span></label>
+          <input
+            type="number"
+            class="form-control form-control-sm"
+            appOnlyNumbers
+            formControlName="salary"
+          />
+        </div>
+        <div class="form-group">
+          <label>Contract Start Date<span></span></label>
+          <input
+            type="date"
+            class="form-control form-control-sm"
+            formControlName="contractStartDate"
+          />
+        </div>
+        <div class="form-group">
+          <label>Contract End Date</label>
+          <input
+            type="date"
+            class="form-control form-control-sm"
+            formControlName="contractEndDate"
+          />
+        </div>
+        <div class="form-group">
+          <div>
+            <label>Choose Sector </label>
+            <select formControlName="sector" class="form-group">
+              <option *ngFor="let sector of sectors" [ngValue]="sector">
+                {{ sector.name }}
+              </option>
+            </select>
+          </div>
+          <div>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="btn-modal-sector"
+              (click)="openModal()"
+            >
+              Registry Sector
+            </button>
+          </div>
+        </div>
+        <hr />
+        <app-address></app-address>
+        <app-buttons></app-buttons>
+      </form>
+    </div>
+  </div>
+</div>
