@@ -3,6 +3,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Sector } from 'src/app/interfaces/sector';
 import { environment } from 'src/environments/environment';
+import { SectorList } from '../interfaces/sectorList';
+import { ApiResponseList } from '../interfaces/apiResponseList';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -16,8 +18,10 @@ const httpOptions = {
 export class SectorsService {
   constructor(private http: HttpClient) {}
 
-  GetAll(): Observable<Sector[]> {
-    return this.http.get<Sector[]>(`${environment.url}/sectors`);
+  GetAll(): Observable<ApiResponseList<SectorList>> {
+    return this.http.get<ApiResponseList<SectorList>>(
+      `${environment.url}/sectors`
+    );
   }
   PostSector(sector: Sector): Observable<any> {
     return this.http.post<Sector>(

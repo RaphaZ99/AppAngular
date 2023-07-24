@@ -8,6 +8,8 @@ import { Sector } from 'src/app/interfaces/sector';
 import { SectorsService } from 'src/app/services/sectors.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SectorModalComponent } from '../sector/sector-modal/sector-modal.component';
+import { SectorList } from 'src/app/interfaces/sectorList';
+import { ApiResponseList } from 'src/app/interfaces/apiResponseList';
 
 @Component({
   selector: 'app-persons',
@@ -17,7 +19,7 @@ import { SectorModalComponent } from '../sector/sector-modal/sector-modal.compon
 export class EmployeeComponent implements OnInit {
   employeeForm: any;
   titleFormulary!: string;
-  sectors!: Sector[];
+  sectors!: SectorList[];
   selectedSector: any;
 
   @ViewChild(AddressComponent) addressComponent!: AddressComponent;
@@ -29,8 +31,12 @@ export class EmployeeComponent implements OnInit {
     private sectorService: SectorsService,
     private modalService: NgbModal
   ) {
-    this.sectorService.GetAll().subscribe((data: any[]) => {
-      this.sectors = data;
+    this.sectorService.GetAll().subscribe((response) => {
+      if (response.success) {
+        this.sectors = response.data;
+      } else {
+        alert(`Unable to load sectors : ${response.errorMessage}`);
+      }
     });
 
     console.log(this.sectors);
@@ -64,7 +70,7 @@ export class EmployeeComponent implements OnInit {
       mobileNumber: [null, [Validators.required]],
       jobName: [null],
       salary: [null],
-      contractStartDate: [null],
+      contractStartDate: [null, [Validators.required]],
       contractEndDate: [null],
       sector: [null],
     });
@@ -77,7 +83,7 @@ export class EmployeeComponent implements OnInit {
     modalRef.result
       .then((result) => {
         console.log(result);
-        if (result != undefined) {
+        if (result.success) {
           let objectPush = {
             name: result.name,
             id: 0,
@@ -85,8 +91,8 @@ export class EmployeeComponent implements OnInit {
           this.sectors.push(objectPush);
           alert('Registration done successfully.');
           modalRef.close();
-        } else if (result != undefined && result.status != 200) {
-          alert(result.error);
+        } else if (!result.sucess) {
+          alert(result.error.errorMessage);
         } else {
           modalRef.close();
         }
@@ -117,6 +123,7 @@ export class EmployeeComponent implements OnInit {
 
   saveForm(): void {
     const addressForm = this.addressComponent.formulary;
+    console.log(addressForm.value.zipCode);
 
     if (this.employeeForm.valid) {
       const employee: Employee = {
@@ -126,7 +133,7 @@ export class EmployeeComponent implements OnInit {
         person: {
           name: this.employeeForm.value.name,
           cpf: this.employeeForm.value.cpf.toString(),
-          socialName: this.employeeForm.value.birthday,
+          socialName: this.employeeForm.value.socialName,
           rg: this.employeeForm.value.rg.toString(),
           phoneNumber:
             this.employeeForm.value.phoneNumber == null
@@ -161,8 +168,8 @@ export class EmployeeComponent implements OnInit {
       console.log(employee);
 
       this.employeesService.PostPerson(employee).subscribe({
-        next: (data) => console.log(data),
-        error: (data) => alert(data.error),
+        next: () => alert('Employee Registered.'),
+        error: (data) => alert(data.error.errorMessage),
         complete: () => console.log('complete'),
       });
     } else {
