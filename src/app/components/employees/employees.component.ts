@@ -1,15 +1,18 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Employee } from 'src/app/interfaces/employee';
 import { EmployeesService } from 'src/app/services/employees.service';
 import { AddressComponent } from '../address/address/address.component';
-import { FormValidationService } from 'src/app/services/form-validation.service';
-import { Sector } from 'src/app/interfaces/sector';
 import { SectorsService } from 'src/app/services/sectors.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SectorModalComponent } from '../sector/sector-modal/sector-modal.component';
-import { SectorList } from 'src/app/interfaces/sectorList';
-import { ApiResponseList } from 'src/app/interfaces/apiResponseList';
+import { Sector } from 'src/app/interfaces/sector';
+import { isDateValid } from 'src/app/utils/date-util';
 
 @Component({
   selector: 'app-persons',
@@ -17,9 +20,9 @@ import { ApiResponseList } from 'src/app/interfaces/apiResponseList';
   styleUrls: ['./employees.component.css'],
 })
 export class EmployeeComponent implements OnInit {
-  employeeForm: any;
+  employeeForm!: FormGroup;
   titleFormulary!: string;
-  sectors!: SectorList[];
+  sectors!: Sector[];
   selectedSector: any;
 
   @ViewChild(AddressComponent) addressComponent!: AddressComponent;
@@ -27,13 +30,12 @@ export class EmployeeComponent implements OnInit {
   constructor(
     private employeesService: EmployeesService,
     private formBuilder: FormBuilder,
-    private formValidationService: FormValidationService,
     private sectorService: SectorsService,
     private modalService: NgbModal
   ) {
-    this.sectorService.GetAll().subscribe((response) => {
+    this.sectorService.getAll().subscribe((response) => {
       if (response.success) {
-        this.sectors = response.data;
+        this.sectors = response.dataList;
       } else {
         alert(`Unable to load sectors : ${response.errorMessage}`);
       }
@@ -49,30 +51,30 @@ export class EmployeeComponent implements OnInit {
     this.employeeForm = this.formBuilder.group({
       name: [null, Validators.required],
       cpf: [
-        null,
+        '',
         [
           Validators.required,
           Validators.pattern('[0-9]+'),
           Validators.minLength(11),
         ],
       ],
-      socialName: [null],
-      birthday: [null],
+      socialName: [''],
+      birthday: [''],
       rg: [
-        null,
+        '',
         [
           Validators.required,
           Validators.pattern('[0-9]+'),
           Validators.minLength(7),
         ],
       ],
-      phoneNumber: [null],
-      mobileNumber: [null, [Validators.required]],
-      jobName: [null],
-      salary: [null],
-      contractStartDate: [null, [Validators.required]],
-      contractEndDate: [null],
-      sector: [null],
+      phoneNumber: [''],
+      mobileNumber: ['', [Validators.required]],
+      jobName: [''],
+      salary: [''],
+      contractStartDate: ['', [Validators.required, this.customDateValidator]],
+      contractEndDate: [''],
+      sector: [''],
     });
   }
 
@@ -80,55 +82,35 @@ export class EmployeeComponent implements OnInit {
     const modalRef = this.modalService.open(SectorModalComponent, {
       backdrop: false,
     });
-    modalRef.result
-      .then((result) => {
-        console.log(result);
-        if (result.success) {
-          let objectPush = {
-            name: result.name,
-            id: 0,
-          };
-          this.sectors.push(objectPush);
-          alert('Registration done successfully.');
-          modalRef.close();
-        } else if (!result.sucess) {
-          alert(result.error.errorMessage);
-        } else {
-          modalRef.close();
-        }
-      })
-      .catch((error) => {
-        alert('Unable to register.');
-        modalRef.close();
-      });
+    modalRef.result.then((result) => {
+      if (result && result.success) {
+        let objectPush = {
+          name: result.data.name,
+          id: result.data.id,
+        };
+        this.sectors.push(objectPush);
+        alert('Registration done successfully.');
+      }
+    });
   }
 
   onSectorSelection(sector: any): void {
     this.selectedSector = sector;
   }
 
-  isInvalidField(controlName: string): boolean {
-    return this.formValidationService.isInvalidField(
-      controlName,
-      this.employeeForm
-    );
-  }
-
-  getCurrentError(controlName: string): any {
-    return this.formValidationService.getCurrentError(
-      controlName,
-      this.employeeForm
-    );
+  customDateValidator(control: FormControl): { [key: string]: any } | null {
+    return isDateValid(control.value) ? null : { invalidDate: true };
   }
 
   saveForm(): void {
     const addressForm = this.addressComponent.formulary;
-    console.log(addressForm.value.zipCode);
-
+    debugger;
     if (this.employeeForm.valid) {
       const employee: Employee = {
-        contractEndDate: this.employeeForm.value.contractEndDate,
-        contractStartDate: this.employeeForm.value.contractStartDate,
+        contractEndDate: isDateValid(this.employeeForm.value.contractEndDate)
+          ? new Date(this.employeeForm.value.contractEndDate)
+          : undefined,
+        contractStartDate: new Date(this.employeeForm.value.contractStartDate),
         salary: this.employeeForm.value.salary,
         person: {
           name: this.employeeForm.value.name,
@@ -140,7 +122,9 @@ export class EmployeeComponent implements OnInit {
               ? null
               : this.employeeForm.value.phoneNumber.toString(),
           mobileNumber: this.employeeForm.value.mobileNumber.toString(),
-          birthday: this.employeeForm.value.birthday,
+          birthday: isDateValid(this.employeeForm.value.birthday)
+            ? new Date(this.employeeForm.value.birthday)
+            : undefined,
           address: {
             city: addressForm.value.city,
             complement: addressForm.value.complement,
@@ -158,17 +142,18 @@ export class EmployeeComponent implements OnInit {
         },
         job: {
           name: this.employeeForm.value.jobName,
-          sector: {
-            name: this.employeeForm.value.sector.name,
-            id: 0,
-          },
+          sectorId: this.employeeForm.value.sector.id,
         },
       };
 
       console.log(employee);
 
-      this.employeesService.PostPerson(employee).subscribe({
-        next: () => alert('Employee Registered.'),
+      this.employeesService.save(employee).subscribe({
+        next: () => {
+          alert('Employee Registered.');
+          this.employeeForm.reset();
+          this.addressComponent.formulary.reset();
+        },
         error: (data) => alert(data.error.errorMessage),
         complete: () => console.log('complete'),
       });

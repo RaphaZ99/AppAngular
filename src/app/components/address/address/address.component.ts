@@ -14,7 +14,7 @@ export class AddressComponent implements OnInit {
   ngOnInit(): void {
     this.formulary = this.formbuilder.group({
       street: [null],
-      zipCode: [null, Validators.required],
+      zipCode: [null],
       number: [null],
       city: [null],
       region: [null],

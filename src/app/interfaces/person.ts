@@ -5,7 +5,7 @@ export interface Person {
   cpf: string;
   name: string;
   socialName: string;
-  birthday: string;
+  birthday?: Date;
   rg: string;
   phoneNumber: string;
   mobileNumber: string;

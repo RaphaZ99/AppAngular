@@ -33,14 +33,13 @@ export class SectorModalComponent implements OnInit {
         name: this.sectorForm.value.name,
         id: 0,
       };
-      console.log(sectorPost);
-      this.sectorService.PostSector(sectorPost).subscribe({
+      this.sectorService.save(sectorPost).subscribe({
         next: (data) => this.activeModal.close(data),
-        error: (data) => this.activeModal.close(data),
-        complete: () => console.log('complete'),
+        error: (error) => {
+          alert(error.error.errorMessage);
+          this.activeModal.dismiss();
+        },
       });
-    } else {
-      alert('A name is required');
     }
   }
 }

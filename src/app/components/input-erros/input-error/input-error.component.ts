@@ -1,22 +1,27 @@
-import { Component, Input } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-input-error',
   templateUrl: './input-error.component.html',
   styleUrls: ['./input-error.component.css'],
 })
-export class InputErrorComponent {
-  @Input() isInvalidInput!: boolean;
-  @Input() errorMessages: { [key: string]: string } = {};
-  @Input() currentError!: string;
+export class InputErrorComponent implements OnInit {
+  @Input() controlName!: string; //recebe o nome do campo
+  @Input() errorMessages: { [key: string]: string } = {}; //recebe lista de errors key: nome error / mensagem error
+  @Input() formGroup!: FormGroup; // recebe o formulário
+
+  ngOnInit() {}
 
   getErrorMessage(): string {
-    //console.log(this.errorMessages);
+    const control = this.formGroup.get(this.controlName);
 
-    if (this.isInvalidInput && this.currentError) {
-      return this.errorMessages[this.currentError] || 'Invalid Field!';
+    if ((control?.invalid && control?.touched) || control?.invalid) {
+      const errors = control?.errors;
+      const currentError = Object.keys(errors || {})[0];
+      return this.errorMessages[currentError] || 'Invalid Field!';
     }
+
     return '';
   }
 }

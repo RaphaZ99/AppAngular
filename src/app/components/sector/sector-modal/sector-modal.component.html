@@ -7,6 +7,11 @@
     <label>
       Name:
       <input type="text" class="form-control" formControlName="name" />
+      <app-input-error
+        [formGroup]="sectorForm"
+        [controlName]="'name'"
+        [errorMessages]="{ required: 'Field is required' }"
+      ></app-input-error>
     </label>
   </form>
 </div>

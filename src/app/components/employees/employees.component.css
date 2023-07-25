@@ -4,3 +4,13 @@
  .invalid-field {
    border: 1px solid red;
  }
+
+.select-sector{
+  display: flex;
+justify-content: space-around;}
+
+select{
+  width: 65%;
+  margin-bottom: 0;
+}
+  

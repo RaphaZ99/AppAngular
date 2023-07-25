@@ -16,22 +16,28 @@
             required
           />
           <app-input-error
-            [isInvalidInput]="isInvalidField('cpf')"
-            [currentError]="getCurrentError('cpf')"
+            [formGroup]="employeeForm"
+            [controlName]="'cpf'"
             [errorMessages]="{
               required: 'Field Required',
-              pattern: 'Type only numbers'
+              pattern: 'Type only numbers',
+              minLength: 'CPF must contain 11 digits'
             }"
           >
           </app-input-error>
         </div>
         <div class="form-group">
-          <label>Name<span class="required-indicator">*</span></label>
+          <label>Name</label>
           <input
             type="text"
             class="form-control form-control-sm"
             formControlName="name"
           />
+          <app-input-error
+            [formGroup]="employeeForm"
+            [controlName]="'name'"
+            [errorMessages]="{ required: 'Name is required' }"
+          ></app-input-error>
         </div>
         <div class="form-group">
           <label>Social Name</label>
@@ -52,8 +58,8 @@
             formControlName="rg"
           />
           <app-input-error
-            [isInvalidInput]="isInvalidField('rg')"
-            [currentError]="getCurrentError('rg')"
+            [formGroup]="employeeForm"
+            [controlName]="'rg'"
             [errorMessages]="{
               required: 'Field Required',
               pattern: 'Type only numbers'
@@ -70,8 +76,8 @@
             required=""
           />
           <app-input-error
-            [isInvalidInput]="isInvalidField('mobileNumber')"
-            [currentError]="getCurrentError('mobileNumber')"
+            [formGroup]="employeeForm"
+            [controlName]="'mobileNumber'"
             [errorMessages]="{ required: 'Field Required' }"
           >
           </app-input-error>
@@ -117,7 +123,15 @@
             type="date"
             class="form-control form-control-sm"
             formControlName="contractStartDate"
-          />
+          /><app-input-error
+            [formGroup]="employeeForm"
+            [controlName]="'contractStartDate'"
+            [errorMessages]="{
+              required: 'Field Required',
+              invalidDate: 'invalid Date'
+            }"
+          >
+          </app-input-error>
         </div>
         <div class="form-group">
           <label>Contract End Date</label>
@@ -130,26 +144,36 @@
         <div class="form-group">
           <div>
             <label>Choose Sector </label>
+          </div>
+          <div class="row select-sector">
             <select formControlName="sector" class="form-group">
               <option *ngFor="let sector of sectors" [ngValue]="sector">
                 {{ sector.name }}
               </option>
             </select>
-          </div>
-          <div>
             <button
               type="button"
               class="btn btn-primary"
               id="btn-modal-sector"
               (click)="openModal()"
             >
-              Registry Sector
+              Register Sector
             </button>
           </div>
         </div>
         <hr />
         <app-address></app-address>
-        <app-buttons></app-buttons>
+        <hr />
+        <div class="container">
+          <div class="row">
+            <div>
+              <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+            <div class="t-1">
+              <button type="button" class="btn btn-danger">Back</button>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
   </div>

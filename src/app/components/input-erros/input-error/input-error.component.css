@@ -1,3 +1,6 @@
 .error-message{
     color: red; 
 }
+.is-invalid {
+    border-color: red; /* Adicione estilos de destaque para campos inválidos, por exemplo, uma borda vermelha */
+  }
