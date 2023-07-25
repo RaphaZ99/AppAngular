@@ -21,7 +21,7 @@
             [errorMessages]="{
               required: 'Field Required',
               pattern: 'Type only numbers',
-              minLength: 'CPF must contain 11 digits'
+              minlength: 'CPF must contain 11 digits'
             }"
           >
           </app-input-error>
@@ -50,7 +50,7 @@
         <div class="form-group">
           <label>Rg<span></span></label>
           <input
-            type="number"
+            type="text"
             class="form-control form-control-sm"
             appOnlyNumbers
             appLimitLength
@@ -62,7 +62,8 @@
             [controlName]="'rg'"
             [errorMessages]="{
               required: 'Field Required',
-              pattern: 'Type only numbers'
+              pattern: 'Type only numbers',
+              minlength: 'RG must contain 7 digits'
             }"
           ></app-input-error>
         </div>
@@ -111,7 +112,7 @@
         <div class="form-group">
           <label>Salary<span></span></label>
           <input
-            type="number"
+            type="text"
             class="form-control form-control-sm"
             appOnlyNumbers
             formControlName="salary"

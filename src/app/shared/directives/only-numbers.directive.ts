@@ -1,15 +1,23 @@
 import { Directive, HostListener } from '@angular/core';
 
 @Directive({
-  selector: '[appOnlyNumbers]'
+  selector: '[appOnlyNumbers]',
 })
 export class OnlyNumbersDirective {
-
-
-  @HostListener('Keydow',['$event'])
-  onKeyDown(event: KeyboardEvent): void{
+  @HostListener('Keydow', ['$event'])
+  onKeyDown(event: KeyboardEvent): void {
     const key = event.key;
-    if(!/^[0-9]$/.test(key)&& !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(key)){
+    if (
+      !/^[0-9]$/.test(key) &&
+      ![
+        'Backspace',
+        'Delete',
+        'ArrowLeft',
+        'ArrowRight',
+        'Home',
+        'End',
+      ].includes(key)
+    ) {
       event.preventDefault();
     }
   }
@@ -22,8 +30,5 @@ export class OnlyNumbersDirective {
     }
   }
 
- 
-     
-  constructor() { }
-
+  constructor() {}
 }

@@ -18,10 +18,12 @@ export class InputErrorComponent implements OnInit {
 
     if ((control?.invalid && control?.touched) || control?.invalid) {
       const errors = control?.errors;
-      const currentError = Object.keys(errors || {})[0];
-      return this.errorMessages[currentError] || 'Invalid Field!';
+      if (errors) {
+        const errorKeys = Object.keys(errors);
+        const firstErrorKey = errorKeys[0];
+        return this.errorMessages[firstErrorKey] || 'Invalid Field!';
+      }
     }
-
     return '';
   }
 }
